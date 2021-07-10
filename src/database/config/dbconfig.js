@@ -10,5 +10,6 @@ module.exports = {
     timezone: "-03:00",
     define: {
         timesamp: true,
+        freezeTableName: true,
     },
 };
