@@ -1,0 +1,22 @@
+{
+  "name": "ds870_trabalho-final",
+  "version": "1.0.0",
+  "description": "* Guilherme Alves da Silva - GRR20186254\r * Matheus Augusto de Moraes Ribeiro - GRR20176298\r * Michelly Narita Kuriyama - GRR20175515",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon -r dotenv/config ./index.js",
+    "start": "node -r dotenv/config ./index.js "
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.11"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv-safe": "^8.2.0",
+    "express": "^4.17.1",
+    "sequelize": "^6.6.5"
+  }
+}
