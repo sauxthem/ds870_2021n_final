@@ -15,7 +15,7 @@ class Customer extends Sequelize.Model {
     }
 
     static associate(models){
-        this.hasMany(models.Delivery, { foreignKey: "customerId" });
+        this.hasMany(models.Delivery, { foreignKey: "customerId", onDelete: "CASCADE", hooks: true });
     }
 }
 
