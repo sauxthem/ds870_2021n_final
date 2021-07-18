@@ -9,7 +9,8 @@ class Customer extends Sequelize.Model {
                 address: Sequelize.STRING,
             },
             {
-                sequelize
+                sequelize,
+                tableName: 'Customers'
             }
         );
     }

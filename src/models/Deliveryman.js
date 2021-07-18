@@ -10,13 +10,15 @@ class Deliveryman extends Sequelize.Model {
                 phone: Sequelize.STRING(15)
             },
             {
-                sequelize
+                sequelize,
+                tableName: 'Deliverymen'
             }
         );
     }
 
     static associate(models){
         this.hasMany(models.Delivery, { foreignKey: "deliverymanId", onDelete: "CASCADE", hooks: true });
+        this.hasMany(models.Token, { foreignKey: "deliverymanId", onDelete: "CASCADE", hooks: true });
     }
 }
 

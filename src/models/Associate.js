@@ -10,13 +10,15 @@ class Associate extends Sequelize.Model {
                 address: Sequelize.STRING,
             },
             {
-                sequelize
+                sequelize,
+                tableName: 'Associates'
             }
         );
     }
 
     static associate(models){
         this.hasMany(models.Delivery, { foreignKey: "associateId", onDelete: "CASCADE", hooks: true });
+        this.hasMany(models.Token, { foreignKey: "associateId", onDelete: "CASCADE", hooks: true });
     }
 }
 

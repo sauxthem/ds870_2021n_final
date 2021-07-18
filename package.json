@@ -11,6 +11,8 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "dotenv": "^10.0.0",
+    "jsonwebtoken": "^8.5.1",
     "nodemon": "^2.0.11"
   },
   "dependencies": {
@@ -20,5 +22,13 @@
     "mysql2": "^2.2.5",
     "sequelize": "^6.6.5",
     "sequelize-cli": "^6.2.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sauxthem/ds870_2021n_final.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sauxthem/ds870_2021n_final/issues"
+  },
+  "homepage": "https://github.com/sauxthem/ds870_2021n_final#readme"
 }

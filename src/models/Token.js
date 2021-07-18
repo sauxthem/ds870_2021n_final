@@ -1,28 +1,25 @@
 const Sequelize = require("sequelize");
 
-class Delivery extends Sequelize.Model {
+class Token extends Sequelize.Model {
     static init(sequelize){
         super.init(
             {
-                description: Sequelize.STRING,
-                status: Sequelize.STRING(10),
-                value: Sequelize.FLOAT,
+                token: Sequelize.STRING(255),
+                expiration: Sequelize.DATE,
                 deliverymanId: Sequelize.INTEGER,
-                customerId: Sequelize.INTEGER,
                 associateId: Sequelize.INTEGER,
             },
             {
                 sequelize,
-                tableName: 'Deliveries'
+                tableName: 'Token'
             }
         );
     }
 
     static associate(models){
         this.belongsTo(models.Deliveryman, { foreignKey: "deliverymanId" });
-        this.belongsTo(models.Customer, { foreignKey: "customerId" });
         this.belongsTo(models.Associate, { foreignKey: "associateId" });
     }
 }
 
-module.exports = Delivery;
+module.exports = Token;
