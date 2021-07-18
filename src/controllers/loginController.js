@@ -1,4 +1,4 @@
-const Token = require("../models/Token");
+const Login = require("../models/Login");
 const Deliveryman = require("../models/Deliveryman");
 const Associate = require("../models/Associate");
 const bcrypt = require("bcryptjs");
@@ -39,7 +39,7 @@ module.exports = {
                     if (bcrypt.compareSync(password, associate.password)) {
                         const token = generateToken(associate.id);
 
-                        await Token.create({
+                        await Login.create({
                             token,
                             expiration,
                             associateId: associate.id,
@@ -65,7 +65,7 @@ module.exports = {
                 else {
                     if (bcrypt.compareSync(password, deliveryman.password)) {
                         const token = generateToken(deliveryman.id);
-                        await Token.create({
+                        await Login.create({
                             token,
                             expiration,
                             deliverymanId: deliveryman.id
@@ -100,7 +100,7 @@ module.exports = {
                 .json({msg: "You don't have a valid token!"});
         }
         else {
-            const tokendb = await Token.findOne({
+            const tokendb = await Login.findOne({
                 where: {token}
             });
 
@@ -111,7 +111,7 @@ module.exports = {
             }
             else {
                 try {
-                    await Token.update({expiration: new Date()}, {
+                    await Login.update({expiration: new Date()}, {
                         where: {token},
                     });
                     return res

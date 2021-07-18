@@ -1,11 +1,11 @@
-const Token = require("../models/Token");
+const Login = require("../models/Login");
 const jwt = require("jsonwebtoken");
 
 async function verifyJWT(req, res, next) {
 	const token = req.headers["token"];
 	if (!token) return res.status(401).json({msg: "Undefined token."});
 
-	const tokendb = await Token.findOne({
+	const tokendb = await Login.findOne({
 		where: {token}
 	});
 	if (!tokendb) return res.status(401).json({msg: "Undefined token."});

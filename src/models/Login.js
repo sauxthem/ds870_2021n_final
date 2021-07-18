@@ -1,6 +1,6 @@
 const Sequelize = require("sequelize");
 
-class Token extends Sequelize.Model {
+class Login extends Sequelize.Model {
     static init(sequelize){
         super.init(
             {
@@ -11,7 +11,7 @@ class Token extends Sequelize.Model {
             },
             {
                 sequelize,
-                tableName: 'Token'
+                tableName: 'Login'
             }
         );
     }
@@ -22,4 +22,4 @@ class Token extends Sequelize.Model {
     }
 }
 
-module.exports = Token;
+module.exports = Login;

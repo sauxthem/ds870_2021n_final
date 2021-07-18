@@ -18,7 +18,7 @@ class Deliveryman extends Sequelize.Model {
 
     static associate(models){
         this.hasMany(models.Delivery, { foreignKey: "deliverymanId", onDelete: "CASCADE", hooks: true });
-        this.hasMany(models.Token, { foreignKey: "deliverymanId", onDelete: "CASCADE", hooks: true });
+        this.hasMany(models.Login, { foreignKey: "deliverymanId", onDelete: "CASCADE", hooks: true });
     }
 }
 
