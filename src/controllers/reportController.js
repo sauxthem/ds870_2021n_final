@@ -42,17 +42,17 @@ module.exports = {
             if (deliverys) {
                 return res
                     .status(200)
-                    .json({msg: "Administrative report" + qtdCustomers +  qtdDeliveryman +  qtdDeliveries + topCustomers + topDeliveryman + deliveryCompleted + deliveryPending});
+                    .json({msg: "Administrative report" , qtdCustomers ,  qtdDeliveryman ,  qtdDeliveries , topCustomers , topDeliveryman , deliveryCompleted , deliveryPending});
             }
             else {
                 return res
                     .status(404)
-                    .json({msg: "It was not possible to find the deliverys."});
+                    .json({msg: "It was not possible to generate this report"});
             }
         } catch ( error ) {
             return res
                 .status(500)
-                .json({msg: "There was an error list deliverys: " + error.message});
+                .json({msg: "There was an error lin generate report " + error.message});
         }
     },
 
