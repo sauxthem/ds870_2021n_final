@@ -192,13 +192,15 @@ module.exports = {
         const associateId = req.params.id;
         const associate = req.body;
 
-        let pwdValid = passwordValidation(req.body.password);
+        if (req.body.password) {
+            let pwdValid = passwordValidation(req.body.password);
 
-        if (pwdValid !== "OK") {
-            return res
-                .status(400)
-                .json({msg: pwdValid})
-        }
+            if (pwdValid !== "OK") {
+                return res
+                    .status(400)
+                    .json({msg: pwdValid})
+            }
+        } 
 
         if (associateId === undefined) {
             return res
@@ -224,6 +226,7 @@ module.exports = {
                         await Associate.update(associate, {
                             where: {id: associateId},
                         });
+                        
                         return res
                             .status(200)
                             .json({msg: "Associate successfully updated!"});
@@ -246,12 +249,14 @@ module.exports = {
         const associateId = req.params.id;
         const associate = req.body;
 
-        let pwdValid = passwordValidation(req.body.password);
+        if (req.body.password) {
+            let pwdValid = passwordValidation(req.body.password);
 
-        if (pwdValid !== "OK") {
-            return res
-                .status(400)
-                .json({msg: pwdValid})
+            if (pwdValid !== "OK") {
+                return res
+                    .status(400)
+                    .json({msg: pwdValid})
+            }
         }
 
         if (associateId === undefined) {
