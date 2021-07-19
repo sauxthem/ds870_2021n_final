@@ -1,7 +1,7 @@
 const express = require("express");
 const deliverymanRouter = express.Router();
 const deliverymanController = require("../controllers/deliverymanController");
-const auth = require("../middlewares/authDeliveryman");
+const auth = require("../middlewares/authAssociate");
 
 deliverymanRouter.get("/", auth, deliverymanController.listAllDeliverymans);
 deliverymanRouter.get("/listByCPF/:cpf", auth, deliverymanController.getDeliverymanByCPF);
