@@ -1,11 +1,13 @@
 const express = require("express");
 const associateRouter = express.Router();
 const associateController = require("../controllers/associateController");
+const auth = require("../middlewares/authAssociate");
 
-associateRouter.get("/", associateController.listAllAssociates);
-associateRouter.get("/listByCNPJ/:cnpj", associateController.getAssociateByCNPJ);
-associateRouter.post("/newAssociate", associateController.newAssociate);
-associateRouter.put("/updateAssociate/:id", associateController.updateAssociate);
-associateRouter.delete("/:id", associateController.deleteAssociate);
+associateRouter.get("/", auth, associateController.listAllAssociates);
+associateRouter.get("/listByCNPJ/:cnpj", auth, associateController.getAssociateByCNPJ);
+associateRouter.post("/newAssociate", auth, associateController.newAssociate);
+associateRouter.put("/updateAssociate/:id", auth, associateController.updateAssociate);
+associateRouter.delete("/:id", auth, associateController.deleteAssociate);
+associateRouter.post("/login", associateController.authenticateAssociate);
 
 module.exports = associateRouter;
