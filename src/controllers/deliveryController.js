@@ -8,7 +8,8 @@ module.exports = {
         let {
             description,
             customerId,
-            deliverymanId
+            deliverymanId,
+            status
         } = req.body;
 
         if (description === undefined || customerId === undefined || isNaN(customerId)  || deliverymanId === undefined || isNaN(deliverymanId)) {
@@ -18,11 +19,15 @@ module.exports = {
         }
 
         try {
+            if (!status) status = "PENDING";
+            let associateId = req.id;
 
             let newDelivery = await Delivery.create({
                 description,
                 customerId,
-                deliverymanId
+                deliverymanId,
+                associateId,
+                status
             });
             console.log("\nCreation successful - " + newDelivery.name + "\n");
 
