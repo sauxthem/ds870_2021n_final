@@ -27,7 +27,7 @@ module.exports = {
             let expiration = new Date();
             expiration.setHours(expiration.getHours() + 5);
 
-            if (true) {
+            if (login.length > 11) {
                 let associate = await Associate.findOne({
                     where: {cnpj: login},
                 });
