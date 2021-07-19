@@ -215,9 +215,71 @@ module.exports = {
             else {
                 try {
                     if (associate.companyName || associate.address || associate.cnpj || associate.password) {
-                        let salt = bcrypt.genSaltSync(12);
-                        let hash = bcrypt.hashSync(associate.password, salt);
-                        associate.password = hash;
+                        if (associate.password){
+                            let salt = bcrypt.genSaltSync(12);
+                            let hash = bcrypt.hashSync(associate.password, salt);
+                            associate.password = hash;
+                        }
+                        
+                        await Associate.update(associate, {
+                            where: {id: associateId},
+                        });
+                        return res
+                            .status(200)
+                            .json({msg: "Associate successfully updated!"});
+                    }
+                    else {
+                        return res
+                            .status(400)
+                            .json({msg: "You must inform a companyName, cnpj and password!"});
+                    }
+                } catch (error) {
+                    return res
+                        .status(500)
+                        .json({msg: "There was an error update associate: " + error.message});
+                }
+            }
+        }
+    },
+
+    async selfUpdateAssociate(req, res) {
+        const associateId = req.params.id;
+        const associate = req.body;
+
+        let pwdValid = passwordValidation(req.body.password);
+
+        if (pwdValid !== "OK") {
+            return res
+                .status(400)
+                .json({msg: pwdValid})
+        }
+
+        if (associateId === undefined) {
+            return res
+                .status(400)
+                .json({msg: "You must inform a valid ID!"});
+        }
+        else {
+            const associateExists = await Associate.findByPk(associateId);
+            if (associateExists === undefined) {
+                return res
+                    .status(404)
+                    .json({msg: "The informed id doesn`t exists."});
+            }
+            else if (associateExists.id != req.id) {
+                return res 
+                    .status(401)
+                    .json({ msg: "You do not have permission to update this associate's data." });
+            }
+            else {
+                try {
+                    if (associate.companyName || associate.address || associate.cnpj || associate.password) {
+                        if (associate.password){
+                            let salt = bcrypt.genSaltSync(12);
+                            let hash = bcrypt.hashSync(associate.password, salt);
+                            associate.password = hash;
+                        }
+
                         await Associate.update(associate, {
                             where: {id: associateId},
                         });
