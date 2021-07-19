@@ -1,4 +1,5 @@
 const Deliveryman = require("../models/Deliveryman");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 function passwordValidation(password) {
@@ -13,7 +14,57 @@ function passwordValidation(password) {
     else return "OK";
 }
 
+function generateToken(id, role) {
+    process.env.JWT_SECRET = Math.random().toString(36).slice(-20);
+    return jwt.sign({id, role}, process.env.JWT_SECRET, {
+        expiresIn: 18000,
+    });
+}
+
+
 module.exports = {
+    async authenticateDeliveryman(req, res) {
+        let {
+            login,
+            password,
+        } = req.body;
+
+        if (!login || !password) {
+            return res
+                .status(400)
+                .json({msg: "You must inform the CPF and password!"});
+        }
+
+        try {
+            let deliveryman = await Deliveryman.findOne({
+                where: {cpf: login},
+            });
+
+            if (!deliveryman) {
+                return res.status(404).json({msg: "User not found!"});
+            }
+            else {
+                if (bcrypt.compareSync(password, deliveryman.password)) {
+                    const token = generateToken(deliveryman.id, "Deliveryman");
+
+                    return res
+                        .status(200)
+                        .setHeader("token", token)
+                        .json({msg: "User successfully authenticated.", token});
+                }
+                else {
+                    return res.status(401).json({msg: "Invalid user and/or password. "});
+                }
+            }
+        }
+        catch (error) {
+            console.log(error);
+           return res
+                .status(500)
+                .json({ msg: error.message});
+        }
+    },
+
     async newDeliveryman(req, res) {
         let {
             name,
@@ -26,6 +77,23 @@ module.exports = {
             return res
                 .status(400)
                 .json({msg: "You must inform a valid name, cpf, password and phone!"});
+        }
+
+        try {
+            let deliveryman = await Deliveryman.findOne({
+                where: {cpf: cpf}
+            });
+
+            if (deliveryman) {
+                return res
+                    .status(400)
+                    .json({ msg: "The informed CPF is already registered!"});
+            }
+        }
+        catch (error) {
+            return res
+                .status(500)
+                .json({msg: "There was an error while creating the Deliveryman : " + error});
         }
 
         let pwdValid = passwordValidation(password);

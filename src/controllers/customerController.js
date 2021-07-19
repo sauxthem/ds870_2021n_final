@@ -15,6 +15,23 @@ module.exports = {
         }
 
         try {
+            let customer = await Customer.findOne({
+                where: {cnpj: cnpj}
+            });
+
+            if (customer) {
+                return res
+                    .status(400)
+                    .json({ msg: "The informed CNPJ is already registered!"});
+            }
+        }
+        catch (error) {
+            return res
+                .status(500)
+                .json({msg: "There was an error while creating the Associate: " + error});
+        }
+
+        try {
 
             let newCustomer = await Customer.create({
                 companyName,
