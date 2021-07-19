@@ -52,7 +52,7 @@ module.exports = {
         } catch ( error ) {
             return res
                 .status(500)
-                .json({msg: "There was an error lin generate report " + error.message});
+                .json({msg: "There was an error in generate report " + error.message});
         }
     },
 
