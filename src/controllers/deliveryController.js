@@ -1,5 +1,6 @@
 const Delivery = require("../models/Delivery");
 const Deliveryman = require("../models/Deliveryman");
+const { Op } = require("sequelize");
 
 module.exports = {
 
@@ -7,7 +8,8 @@ module.exports = {
         let {
             description,
             customerId,
-            deliverymanId
+            deliverymanId,
+            status
         } = req.body;
 
         if (description === undefined || customerId === undefined || isNaN(customerId)  || deliverymanId === undefined || isNaN(deliverymanId)) {
@@ -17,11 +19,15 @@ module.exports = {
         }
 
         try {
+            if (!status) status = "PENDING";
+            let associateId = req.id;
 
             let newDelivery = await Delivery.create({
                 description,
                 customerId,
-                deliverymanId
+                deliverymanId,
+                associateId,
+                status
             });
             console.log("\nCreation successful - " + newDelivery.name + "\n");
 
@@ -68,7 +74,12 @@ module.exports = {
     async listAllDeliverysPending(req, res) {
         try {
             const deliverys = await Delivery.findAll({
-                where: {status: 'PENDING'},
+                where: {
+                    [Op.and]: [
+                        { status: 'PENDING' },
+                        { deliverymanId: req.id }
+                    ]
+                },
                 order: [["id", "ASC"]]
             });
 
@@ -92,7 +103,12 @@ module.exports = {
     async listAllDeliverysCompleted(req, res) {
         try {
             const deliverys = await Delivery.findAll({
-                where: {status: 'COMPLETED'},
+                where: {
+                    [Op.and]: [
+                        { status: 'COMPLETED' },
+                        { deliverymanId: req.id }
+                    ]
+                },
                 order: [["id", "ASC"]]
             });
 
@@ -156,7 +172,7 @@ module.exports = {
         }
     },
 
-    async updateDelivery(req, res) {
+    async updateDeliveryAssociate(req, res) {
         const deliveryId = req.params.id;
         const delivery = req.body;
 
@@ -174,15 +190,66 @@ module.exports = {
                     .json({msg: "The informed id doesn`t exists."});
             }
             else {
+                try {
+                    if (delivery.description || delivery.customerId || isNaN(delivery.customerId)  || delivery.deliverymanId || isNaN(delivery.deliverymanId) || delivery.associateId || isNaN(delivery.associateId)) {
+                        await Delivery.update(delivery, {
+                            where: {id: deliveryId},
+                        });
+                        return res
+                            .status(200)
+                            .json({msg: "Delivery successfully updated!"});
+                    }
+                    else {
+                        return res
+                            .status(400)
+                            .json({msg: "You must inform a description, customerId, deliverymanId and associateId!"});
+                    }
+                } catch (error) {
+                    return res
+                        .status(500)
+                        .json({msg: "There was an error update delivery: " + error.message});
+                }
+            }
+        }
+    },
 
-                if(!deliveryExists.status === 'PENDING') {
+    async updateDeliveryDeliveryman(req, res) {
+        const deliveryId = req.params.id;
+        const delivery = req.body;
+
+        if (deliveryId === undefined) {
+            return res
+                .status(400)
+                .json({msg: "You must inform a valid ID!"});
+        }
+        else if (!delivery.status && !delivery.value) {
+            return res
+                .status(400)
+                .json({ msg: "You must inform a valid price and/or status!" });
+        }
+        else {
+            const deliveryExists = await Delivery.findByPk(deliveryId);
+
+            if (deliveryExists === undefined) {
+                return res
+                    .status(404)
+                    .json({msg: "The informed id doesn`t exists."});
+            }
+            else if (deliveryExists.deliverymanId != req.id){
+                return res
+                    .status(401)
+                    .json({msg: "You do not have permission to update this delivery." });
+            }
+            else {
+
+                if(deliveryExists.status !== 'PENDING') {
                     return res
                         .status(404)
                         .json({msg: "The informed id doesn`t PENDING."});
                 }
 
                 try {
-                    if (delivery.description || delivery.customerId || isNaN(delivery.customerId)  || delivery.deliverymanId || isNaN(delivery.deliverymanId) || delivery.associateId || isNaN(delivery.associateId)) {
+                    if (delivery.status || delivery.value) {
                         await Delivery.update(delivery, {
                             where: {id: deliveryId},
                         });
