@@ -1,4 +1,5 @@
 const Associate = require("../models/Associate");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
 function passwordValidation(password) {
@@ -13,7 +14,56 @@ function passwordValidation(password) {
     else return "OK";
 }
 
+function generateToken(id, role) {
+    process.env.JWT_SECRET = Math.random().toString(36).slice(-20);
+    return jwt.sign({id, role}, process.env.JWT_SECRET, {
+        expiresIn: 18000,
+    });
+}
+
 module.exports = {
+    async authenticateAssociate(req, res) {
+        let {
+            login,
+            password,
+        } = req.body;
+
+        if (!login || !password) {
+            return res
+                .status(400)
+                .json({msg: "You must inform the CNPJ and password!"});
+        }
+
+        try {
+            let associate = await Associate.findOne({
+                where: {cnpj: login},
+            });
+
+            if (!associate) {
+                return res.status(404).json({msg: "User not found!"});
+            }
+            else {
+                if (bcrypt.compareSync(password, associate.password)) {
+                    const token = generateToken(associate.id, "Associate");
+
+                    return res
+                        .status(200)
+                        .setHeader("token", token)
+                        .json({msg: "User successfully authenticated.", token});
+                }
+                else {
+                    return res.status(401).json({msg: "Invalid user and/or password. "});
+                }
+            }
+        }
+        catch (error) {
+            console.log(error);
+           return res
+                .status(500)
+                .json({ msg: error.message});
+        }
+    },
+
     async newAssociate(req, res) {
         let {
             companyName,
@@ -26,6 +76,23 @@ module.exports = {
             return res
                 .status(400)
                 .json({msg: "You must inform a valid companyName, cnpj and password!"});
+        }
+
+        try {
+            let associate = await Associate.findOne({
+                where: {cnpj: cnpj}
+            });
+
+            if (associate) {
+                return res
+                    .status(400)
+                    .json({ msg: "The informed CNPJ is already registered!"});
+            }
+        }
+        catch (error) {
+            return res
+                .status(500)
+                .json({msg: "There was an error while creating the Associate: " + error});
         }
 
         let pwdValid = passwordValidation(password);
