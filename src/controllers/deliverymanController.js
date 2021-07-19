@@ -160,7 +160,7 @@ module.exports = {
     async getDeliverymanByCPF(req, res) {
         let cpf = req.params.cpf;
 
-        if (cpf === undefined || isNaN(cnpcpfj)) {
+        if (cpf === undefined || isNaN(cpf)) {
             return res
                 .status(400)
                 .json({msg: "You must inform a valid CPF (Only numbers)!"});
