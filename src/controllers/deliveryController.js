@@ -217,7 +217,7 @@ module.exports = {
                 .status(400)
                 .json({msg: "You must inform a valid ID!"});
         }
-        else if (!status && !value) {
+        else if (!delivery.status && !delivery.value) {
             return res
                 .status(400)
                 .json({ msg: "You must inform a valid price and/or status!" });
@@ -230,9 +230,14 @@ module.exports = {
                     .status(404)
                     .json({msg: "The informed id doesn`t exists."});
             }
+            else if (deliveryExists.deliverymanId != req.id){
+                return res
+                    .status(401)
+                    .json({msg: "You do not have permission to update this delivery." });
+            }
             else {
 
-                if(!deliveryExists.status === 'PENDING') {
+                if(deliveryExists.status !== 'PENDING') {
                     return res
                         .status(404)
                         .json({msg: "The informed id doesn`t PENDING."});
